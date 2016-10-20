@@ -35,4 +35,23 @@ public class GridAnalyzer {
         return false;
     }
 
+    public static boolean checkRows(Grid grid) {
+        return checkColumns(swapCellsFromCols2Rows(grid));
+
+    }
+
+    private static Grid swapCellsFromCols2Rows(Grid oldGrid) {
+        int cntCols = oldGrid.getGrid().length;
+        int cntRows = (oldGrid.getGrid()[0]).length;
+        Cell[][] swappedCells = new Cell[cntRows][cntCols];
+        // iterate through old grid to fill new grid
+        for (int col = 0; col < cntCols; col++) {
+            for (int row = 0; row < cntRows; row++) {
+                Cell cell = oldGrid.getGrid()[col][row];
+                swappedCells[row][col] = cell;
+            }
+        }
+        return new Grid(swappedCells);
+    }
+
 }

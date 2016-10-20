@@ -5,11 +5,8 @@ public class Grid {
     private final int MAX_ROWS = 6;
     private final int MAX_COLUMNS = 7;
 
-    public Cell[][] getGrid() {
-        return grid;
-    }
 
-    Cell[][] grid;
+    final Cell[][] grid;
 
     public Grid() {
         grid = new Cell[MAX_COLUMNS][MAX_ROWS];
@@ -18,6 +15,10 @@ public class Grid {
                 grid[col][row] = new Cell();
             }
         }
+    }
+
+    public Grid(Cell[][] grid) {
+        this.grid = grid;
     }
 
     public boolean isEmpty() {
@@ -75,4 +76,9 @@ public class Grid {
         }
         return count;
     }
+
+    public Cell[][] getGrid() {
+        return grid;
+    }
+
 }
