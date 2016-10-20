@@ -1,5 +1,8 @@
 package com.axa.sea;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GridAnalyzer {
 
     private GridAnalyzer() {
@@ -8,30 +11,11 @@ public class GridAnalyzer {
     private static int NUMBER_OF_SAME_TOKENS_TO_WIN = 4;
 
     public static boolean checkColumns(Grid grid) {
-        int count = 1;
-        Cell lastCell = new Cell();
-        for (Cell[] cells : grid.getGrid()) {
-
-            if (cells[0].getColour() == Cell.TokenColour.UNKNOWN) {
-                continue;
+        for (Cell[] cols : grid.getGrid()) {
+            if (checkLine4Win(cols)) {
+                return true;
             }
-            for (Cell cell : cells) {
-                if (cell.getColour() == Cell.TokenColour.UNKNOWN) {
-                    continue;
-                }
-                if (cell.getColour() == lastCell.getColour()) {
-                    count++;
-                    if (count == NUMBER_OF_SAME_TOKENS_TO_WIN) {
-                        return true;
-                    }
-                } else {
-                    lastCell = cell;
-                    count = 1;
-                }
-            }
-            count = 0;
         }
-
         return false;
     }
 
@@ -40,9 +24,54 @@ public class GridAnalyzer {
 
     }
 
+    public static boolean checkDiagonalLeft2Right(Grid grid) {
+
+        int maxColsToCheck = grid.getMaxCols() - NUMBER_OF_SAME_TOKENS_TO_WIN + 1;
+        int maxRowsToCheck = grid.getMaxRows() - NUMBER_OF_SAME_TOKENS_TO_WIN + 1;
+
+        for (int column = 0; column < maxColsToCheck; column++) {
+            for (int row = 0; row < maxRowsToCheck; row++) {
+                Cell[] line = extractDiagonalLineLeft2Rigth(grid, column, row);
+                if (checkLine4Win(line)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static Cell[] extractDiagonalLineLeft2Rigth(Grid grid, int startColumn, int startRow) {
+        List<Cell> cells = new ArrayList<>();
+        for (int col = startColumn, row = startRow; col < grid.getMaxCols() && row < grid.getMaxRows(); col++, row++) {
+            cells.add(grid.getGrid()[col][row]);
+        }
+        return cells.toArray(new Cell[cells.size()]);
+    }
+
+    private static boolean checkLine4Win(Cell[] line) {
+        int count = 1;
+        Cell lastCell = new Cell();
+        if (line[0].getColour() != Cell.TokenColour.UNKNOWN) {
+            for (Cell rowCell : line) {
+                if (rowCell.getColour() != Cell.TokenColour.UNKNOWN) {
+                    if (rowCell.getColour() == lastCell.getColour()) {
+                        count++;
+                        if (count == NUMBER_OF_SAME_TOKENS_TO_WIN) {
+                            return true;
+                        }
+                    } else {
+                        lastCell = rowCell;
+                        count = 1;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private static Grid swapCellsFromCols2Rows(Grid oldGrid) {
-        int cntCols = oldGrid.getGrid().length;
-        int cntRows = (oldGrid.getGrid()[0]).length;
+        int cntCols = oldGrid.getMaxCols();
+        int cntRows = oldGrid.getMaxRows();
         Cell[][] swappedCells = new Cell[cntRows][cntCols];
         // iterate through old grid to fill new grid
         for (int col = 0; col < cntCols; col++) {

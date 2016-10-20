@@ -5,7 +5,6 @@ public class Grid {
     private final int MAX_ROWS = 6;
     private final int MAX_COLUMNS = 7;
 
-
     final Cell[][] grid;
 
     public Grid() {
@@ -75,6 +74,14 @@ public class Grid {
             count++;
         }
         return count;
+    }
+
+    int getMaxRows(){
+        return grid[0].length;
+    }
+
+    int getMaxCols(){
+        return grid.length;
     }
 
     public Cell[][] getGrid() {
