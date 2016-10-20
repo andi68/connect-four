@@ -5,6 +5,10 @@ public class Grid {
     private final int MAX_ROWS = 6;
     private final int MAX_COLUMNS = 7;
 
+    public Cell[][] getGrid() {
+        return grid;
+    }
+
     Cell[][] grid;
 
     public Grid() {
@@ -30,7 +34,7 @@ public class Grid {
         return true;
     }
 
-    public void addToken(Column column, TokenColour tokenColour) {
+    public void addToken(Column column, Cell.TokenColour tokenColour) {
 
         validateIfColIsFull(grid[column.ordinal()]);
 
@@ -44,33 +48,10 @@ public class Grid {
     }
 
     private void validateIfColIsFull(Cell[] cells) {
-        Cell cell = cells[MAX_ROWS-1];
+        Cell cell = cells[MAX_ROWS - 1];
         if (!cell.isEmpty()) {
             throw new ColumnIsFullException("col is full");
         }
-    }
-
-    public class Cell {
-
-        private TokenColour colour = TokenColour.UNKNOWN;
-
-        public boolean isEmpty() {
-            return this.colour == TokenColour.UNKNOWN;
-        }
-
-        public TokenColour getColour() {
-            return colour;
-        }
-
-        public void setColour(TokenColour colour) {
-            this.colour = colour;
-        }
-    }
-
-    enum TokenColour {
-        UNKNOWN,
-        RED,
-        YELLOW
     }
 
     enum Column {

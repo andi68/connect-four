@@ -19,7 +19,7 @@ public class GridTest {
     @Test
     public void assertGridWithTokensIsNotEmpty() {
         Grid grid = new Grid();
-        grid.addToken(Grid.Column.FIRST, Grid.TokenColour.RED);
+        grid.addToken(Grid.Column.FIRST, Cell.TokenColour.RED);
         assertFalse(grid.isEmpty());
     }
 
@@ -27,7 +27,7 @@ public class GridTest {
     public void addChipFailsWhenColumnIsFull() {
         Grid grid = new Grid();
         for (int i = 0; i < MAX_ROWS + 1; i++) {
-            grid.addToken(Grid.Column.FIRST, Grid.TokenColour.RED);
+            grid.addToken(Grid.Column.FIRST, Cell.TokenColour.RED);
         }
     }
 
@@ -35,7 +35,7 @@ public class GridTest {
     public void addChipIncreaseColumnCount() {
         Grid grid = new Grid();
         // Act
-        grid.addToken(Grid.Column.FIRST, Grid.TokenColour.RED);
+        grid.addToken(Grid.Column.FIRST, Cell.TokenColour.RED);
         // Assert
         assertEquals(1, grid.getColoumnCount(Grid.Column.FIRST));
     }
@@ -43,7 +43,7 @@ public class GridTest {
     @Test
     public void addChipDoesNotThrowAnExceptionWhenColumnIsNotFull() {
         Grid grid = new Grid();
-        grid.addToken(Grid.Column.FIRST, Grid.TokenColour.YELLOW);
+        grid.addToken(Grid.Column.FIRST, Cell.TokenColour.YELLOW);
         // do not fail
     }
 
