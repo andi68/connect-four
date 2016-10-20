@@ -1,32 +1,76 @@
 package com.axa.sea;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Grid {
 
-    List<List<Cell>> grid = new ArrayList<>();
+    private final int MAX_ROWS = 6;
+    private final int MAX_COLUMNS = 7;
+
+    Cell[][] grid;
+
+    public Grid() {
+        grid = new Cell[MAX_COLUMNS][MAX_ROWS];
+        for (int col = 0; col < MAX_COLUMNS; col++) {
+            for (int row = 0; row < MAX_ROWS; row++) {
+                grid[col][row] = new Cell();
+            }
+        }
+    }
 
     public boolean isEmpty() {
-        for (List<Cell> cols : grid
-            ) {
-            return cols.isEmpty();
-            //                for (Cell cell : cols
-            //                    ) {
-            //                    if (cell.getState() != Cell.CellState.EMPTY)
-            //                        return false;
-            //                }
+        for (int col = 0; col < MAX_COLUMNS; col++) {
+            for (int row = 0; row < MAX_ROWS; row++) {
+                Cell cell = grid[col][row];
+                if (cell != null) {
+                    if (!cell.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
         }
         return true;
     }
 
-    public void add(Column column, CellState cellState) {
+    public void addToken(Column column, TokenColour tokenColour) {
 
+        validateIfColIsFull(grid[column.ordinal()]);
+
+        for (int row = 0; row < MAX_ROWS; row++) {
+            Cell cell = grid[column.ordinal()][row];
+            if (cell.isEmpty()) {
+                cell.setColour(tokenColour);
+                break;
+            }
+        }
     }
 
-    enum CellState {
+    private void validateIfColIsFull(Cell[] cells) {
+        Cell cell = cells[MAX_ROWS-1];
+        if (!cell.isEmpty()) {
+            throw new ColumnIsFullException("col is full");
+        }
+    }
+
+    public class Cell {
+
+        private TokenColour colour = TokenColour.UNKNOWN;
+
+        public boolean isEmpty() {
+            return this.colour == TokenColour.UNKNOWN;
+        }
+
+        public TokenColour getColour() {
+            return colour;
+        }
+
+        public void setColour(TokenColour colour) {
+            this.colour = colour;
+        }
+    }
+
+    enum TokenColour {
+        UNKNOWN,
         RED,
-        YELLOW;
+        YELLOW
     }
 
     enum Column {
@@ -35,7 +79,19 @@ public class Grid {
         THIRD,
         FOURTH,
         FIFTH,
-        SIXTH;
+        SIXTH
     }
 
+    int getColoumnCount(Column column) {
+        //return 1;
+        int count = 0;
+        for (int row = 0; row < MAX_ROWS; row++) {
+            Cell cell = grid[column.ordinal()][row];
+            if (cell.isEmpty()) {
+                break;
+            }
+            count++;
+        }
+        return count;
+    }
 }
