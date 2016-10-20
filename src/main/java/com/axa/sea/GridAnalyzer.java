@@ -40,6 +40,20 @@ public class GridAnalyzer {
         return false;
     }
 
+    public static boolean checkDiagonalRight2Left(Grid grid){
+        return checkDiagonalLeft2Right(reverseColumnOrder(grid));
+    }
+
+    private static Grid reverseColumnOrder(Grid oldGrid) {
+        int cntCols = oldGrid.getMaxCols();
+        int cntRows = oldGrid.getMaxRows();
+        Cell[][] revesedColumns = new Cell[cntCols][cntRows];
+        for (int col = 0; col < cntCols; col++) {
+            revesedColumns[cntCols - col - 1] = oldGrid.getGrid()[col];
+        }
+        return new Grid(revesedColumns);
+    }
+
     private static Cell[] extractDiagonalLineLeft2Rigth(Grid grid, int startColumn, int startRow) {
         List<Cell> cells = new ArrayList<>();
         for (int col = startColumn, row = startRow; col < grid.getMaxCols() && row < grid.getMaxRows(); col++, row++) {
