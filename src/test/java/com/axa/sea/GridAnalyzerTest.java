@@ -1,6 +1,11 @@
 package com.axa.sea;
 
 import static com.axa.sea.Cell.TokenColour.YELLOW;
+import static com.axa.sea.Grid.Column.FIRST;
+import static com.axa.sea.Grid.Column.FOURTH;
+import static com.axa.sea.Grid.Column.SECOND;
+import static com.axa.sea.Grid.Column.SIXTH;
+import static com.axa.sea.Grid.Column.THIRD;
 import static com.axa.sea.GridAnalyzer.checkColumns;
 import static com.axa.sea.GridAnalyzer.checkDiagonalLeft2Right;
 import static com.axa.sea.GridAnalyzer.checkDiagonalRight2Left;
@@ -25,13 +30,7 @@ public class GridAnalyzerTest {
 
     @Test
     public void when4SameTokenAtBeginningOfAColumnThanAnalyseReturnTrue() {
-        Grid grid = new Grid();
-        // Arrange
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-
+        Grid grid = createStubGridWith4SameInAColum();
         // Act and Assert
         assertTrue("should be true", checkColumns(grid));
     }
@@ -93,13 +92,7 @@ public class GridAnalyzerTest {
 
     @Test
     public void when4SameTokenAtBeginningOfARowThanAnalyseReturnTrue() {
-        Grid grid = new Grid();
-        // Arrange
-        grid.addToken(Grid.Column.FIRST, YELLOW);
-        grid.addToken(Grid.Column.SECOND, YELLOW);
-        grid.addToken(Grid.Column.THIRD, YELLOW);
-        grid.addToken(Grid.Column.FOURTH, YELLOW);
-
+        Grid grid = createStubGridWith4SameInARow();
         // Act and Assert
         assertTrue("should be true", checkRows(grid));
     }
@@ -108,10 +101,10 @@ public class GridAnalyzerTest {
     public void when4SameTokenInMiddleOfARowThenAnalyseReturnTrue() {
         Grid grid = new Grid();
         // Arrange
-        grid.addToken(Grid.Column.FIRST, YELLOW);
-        grid.addToken(Grid.Column.SECOND, TokenColour.RED);
-        grid.addToken(Grid.Column.THIRD, TokenColour.RED);
-        grid.addToken(Grid.Column.FOURTH, TokenColour.RED);
+        grid.addToken(FIRST, YELLOW);
+        grid.addToken(SECOND, TokenColour.RED);
+        grid.addToken(THIRD, TokenColour.RED);
+        grid.addToken(FOURTH, TokenColour.RED);
         grid.addToken(Grid.Column.FIFTH, TokenColour.RED);
         grid.addToken(Grid.Column.SIXTH, YELLOW);
 
@@ -166,26 +159,26 @@ public class GridAnalyzerTest {
     }
 
     private void createStubGridNoSameTokens(Grid grid) {
-        grid.addToken(Grid.Column.THIRD, TokenColour.RED);
-        grid.addToken(Grid.Column.FOURTH, TokenColour.RED);
+        grid.addToken(THIRD, TokenColour.RED);
+        grid.addToken(FOURTH, TokenColour.RED);
         grid.addToken(Grid.Column.FIFTH, YELLOW);
         grid.addToken(Grid.Column.SIXTH, YELLOW);
     }
 
     private void createStubGridWithSameLeftDiagonals(Grid grid) {
-        grid.addToken(Grid.Column.FIRST, YELLOW);
+        grid.addToken(FIRST, YELLOW);
 
-        grid.addToken(Grid.Column.SECOND, YELLOW);
-        grid.addToken(Grid.Column.SECOND, YELLOW);
+        grid.addToken(SECOND, YELLOW);
+        grid.addToken(SECOND, YELLOW);
 
-        grid.addToken(Grid.Column.THIRD, YELLOW);
-        grid.addToken(Grid.Column.THIRD, YELLOW);
-        grid.addToken(Grid.Column.THIRD, YELLOW);
+        grid.addToken(THIRD, YELLOW);
+        grid.addToken(THIRD, YELLOW);
+        grid.addToken(THIRD, YELLOW);
 
-        grid.addToken(Grid.Column.FOURTH, YELLOW);
-        grid.addToken(Grid.Column.FOURTH, YELLOW);
-        grid.addToken(Grid.Column.FOURTH, YELLOW);
-        grid.addToken(Grid.Column.FOURTH, YELLOW);
+        grid.addToken(FOURTH, YELLOW);
+        grid.addToken(FOURTH, YELLOW);
+        grid.addToken(FOURTH, YELLOW);
+        grid.addToken(FOURTH, YELLOW);
     }
 
     // Test Diagonal from right 2 left
@@ -225,19 +218,41 @@ public class GridAnalyzerTest {
         assertFalse("should be false", checkDiagonalLeft2Right(grid));
     }
 
+    private Grid createStubGridWith4SameInARow() {
+        Grid grid = new Grid();
+        // Arrange
+        grid.addToken(FIRST, YELLOW);
+        grid.addToken(SECOND, YELLOW);
+        grid.addToken(THIRD, YELLOW);
+        grid.addToken(FOURTH, YELLOW);
+        return grid;
+    }
+
+    private Grid createStubGridWith4SameInAColum() {
+        Grid grid = new Grid();
+        // Arrange
+        grid.addToken(SIXTH, YELLOW);
+        grid.addToken(SIXTH, YELLOW);
+        grid.addToken(SIXTH, YELLOW);
+        grid.addToken(SIXTH, YELLOW);
+        return grid;
+    }
+
+
+
     private Grid createStubGridWithSameRightDiagonals() {
         Grid grid = new Grid();
         addRow2Grid(grid, Grid.Column.FIFTH, YELLOW);
-        addRow2Grid(grid, Grid.Column.FOURTH, YELLOW, YELLOW);
-        addRow2Grid(grid, Grid.Column.THIRD, YELLOW, YELLOW, YELLOW);
-        addRow2Grid(grid, Grid.Column.SECOND, YELLOW, YELLOW, YELLOW, YELLOW);
+        addRow2Grid(grid, FOURTH, YELLOW, YELLOW);
+        addRow2Grid(grid, THIRD, YELLOW, YELLOW, YELLOW);
+        addRow2Grid(grid, SECOND, YELLOW, YELLOW, YELLOW, YELLOW);
         return grid;
     }
 
     private Grid createStubGridWithSameLeftDiagonals1() {
         Grid grid = new Grid();
-        addRow2Grid(grid, Grid.Column.THIRD, YELLOW);
-        addRow2Grid(grid, Grid.Column.FOURTH, YELLOW, YELLOW);
+        addRow2Grid(grid, THIRD, YELLOW);
+        addRow2Grid(grid, FOURTH, YELLOW, YELLOW);
         addRow2Grid(grid, Grid.Column.FIFTH, YELLOW, YELLOW, YELLOW);
         addRow2Grid(grid, Grid.Column.SIXTH, YELLOW, YELLOW, YELLOW, YELLOW);
         return grid;
