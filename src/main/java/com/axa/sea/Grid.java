@@ -36,7 +36,7 @@ public class Grid {
 
     public void addToken(Column column, Cell.TokenColour tokenColour) {
 
-        validateIfColIsFull(grid[column.ordinal()]);
+        validateIfColumnlIsFull(grid[column.ordinal()]);
 
         for (int row = 0; row < MAX_ROWS; row++) {
             Cell cell = grid[column.ordinal()][row];
@@ -47,7 +47,7 @@ public class Grid {
         }
     }
 
-    private void validateIfColIsFull(Cell[] cells) {
+    private void validateIfColumnlIsFull(Cell[] cells) {
         Cell cell = cells[MAX_ROWS - 1];
         if (!cell.isEmpty()) {
             throw new ColumnIsFullException("col is full");

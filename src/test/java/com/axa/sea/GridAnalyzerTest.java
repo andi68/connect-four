@@ -1,5 +1,7 @@
 package com.axa.sea;
 
+import static com.axa.sea.Cell.TokenColour.RED;
+import static com.axa.sea.Cell.TokenColour.UNKNOWN;
 import static com.axa.sea.Cell.TokenColour.YELLOW;
 import static com.axa.sea.Grid.Column.FIRST;
 import static com.axa.sea.Grid.Column.FOURTH;
@@ -9,15 +11,53 @@ import static com.axa.sea.Grid.Column.THIRD;
 import static com.axa.sea.GridAnalyzer.checkColumns;
 import static com.axa.sea.GridAnalyzer.checkDiagonalLeft2Right;
 import static com.axa.sea.GridAnalyzer.checkDiagonalRight2Left;
+import static com.axa.sea.GridAnalyzer.checkGrid;
 import static com.axa.sea.GridAnalyzer.checkRows;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import com.axa.sea.Cell.TokenColour;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class GridAnalyzerTest {
+
+    // Test Grid
+
+    @Test
+    public void emptyGridDoesNotHaveAWinner() {
+        Grid grid = new Grid();
+        assertEquals("should be unknown", TokenColour.UNKNOWN, checkGrid(grid));
+    }
+
+    @Test
+    public void when4SameOfRedTokensAreInAColumnYellowdHasWon() {
+        Grid grid = createStubGridWith4SameYellowInAColum();
+        // Act and Assert
+        assertEquals("should be yellow", TokenColour.YELLOW, checkGrid(grid));
+    }
+
+    @Test
+    public void when4SameOfRedTokensAreInARowYellowdHasWon() {
+        Grid grid = createStubGridWith4SameYellowInARow();
+        // Act and Assert
+        assertEquals("should be yellow", TokenColour.YELLOW, checkGrid(grid));
+    }
+
+    @Test
+    public void when4SameOfRedTokensAreInALeft2RightDiagonalYellowdHasWon() {
+        Grid grid = createStubGridWithSameYellowLeftDiagonals1();
+        // Act and Assert
+        assertEquals("should be yellow", TokenColour.YELLOW, checkGrid(grid));
+    }
+
+    @Test
+    public void when4SameOfRedTokensAreInARightToLeftDiagonalYellowdHasWon() {
+        Grid grid = createStubGridWithSameYellowRightDiagonals();
+        // Act and Assert
+        assertEquals("should be yellow", TokenColour.YELLOW, checkGrid(grid));
+    }
+
+
+
 
     // Test Columns
 
@@ -25,14 +65,14 @@ public class GridAnalyzerTest {
     public void emptyColumnDoesNotWin() {
         Grid grid = new Grid();
         // Act and Assert
-        assertFalse("should be false", checkColumns(grid));
+        assertEquals("should be unknown", UNKNOWN, checkColumns(grid));
     }
 
     @Test
     public void when4SameTokenAtBeginningOfAColumnThanAnalyseReturnTrue() {
-        Grid grid = createStubGridWith4SameInAColum();
+        Grid grid = createStubGridWith4SameYellowInAColum();
         // Act and Assert
-        assertTrue("should be true", checkColumns(grid));
+        assertEquals("should be yellow", YELLOW, checkColumns(grid));
     }
 
     @Test
@@ -50,35 +90,25 @@ public class GridAnalyzerTest {
         grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
 
         // Act and Assert
-        assertFalse("should be false", checkColumns(grid));
+        assertEquals("should be unknonw", UNKNOWN, checkColumns(grid));
     }
 
     @Test
     public void when4SameTokenInMiddleOfAColumnThanAnalyseReturnTrue() {
-        Grid grid = new Grid();
         // Arrange
-        grid.addToken(Grid.Column.SIXTH, YELLOW);
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, YELLOW);
-
+        Grid grid = new Grid();
+        addColumn2Grid(grid, SIXTH, YELLOW, RED, RED, RED, RED, YELLOW);
         // Act and Assert
-        assertTrue("should be true", checkColumns(grid));
+        assertEquals("should be red", RED, checkColumns(grid));
     }
 
     @Test
     public void whenDifferentTokenOfAColumnThanAnalyseReturnFalse() {
-        Grid grid = new Grid();
         // Arrange
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, YELLOW);
-        grid.addToken(Grid.Column.SIXTH, TokenColour.RED);
-        grid.addToken(Grid.Column.SIXTH, YELLOW);
-
+        Grid grid = new Grid();
+        addColumn2Grid(grid, SIXTH, RED, YELLOW, RED, YELLOW);
         // Act and Assert
-        assertFalse("should be false", checkColumns(grid));
+        assertEquals("should be unknown", UNKNOWN, checkColumns(grid));
     }
 
     // Test Rows
@@ -87,14 +117,14 @@ public class GridAnalyzerTest {
     public void emptyRowsDoesNotWin() {
         Grid grid = new Grid();
         // Act and Assert
-        assertFalse("should be false", checkRows(grid));
+        assertEquals("should be unknown", UNKNOWN, checkRows(grid));
     }
 
     @Test
     public void when4SameTokenAtBeginningOfARowThanAnalyseReturnTrue() {
-        Grid grid = createStubGridWith4SameInARow();
+        Grid grid = createStubGridWith4SameYellowInARow();
         // Act and Assert
-        assertTrue("should be true", checkRows(grid));
+        assertEquals("should be yellow", YELLOW, checkRows(grid));
     }
 
     @Test
@@ -109,17 +139,15 @@ public class GridAnalyzerTest {
         grid.addToken(Grid.Column.SIXTH, YELLOW);
 
         // Act and Assert
-        assertTrue("should be true", checkRows(grid));
+        assertEquals("should be red", RED, checkRows(grid));
     }
 
     @Test
     public void whenDifferentTokenOfARowThanAnalyseReturnFalse() {
-        Grid grid = new Grid();
         // Arrange
-        createStubGridNoSameTokens(grid);
-
+        Grid grid = createStubGridNoSameTokens();
         // Act and Assert
-        assertFalse("should be false", checkRows(grid));
+        assertEquals("should be unknowns", UNKNOWN, checkRows(grid));
     }
 
     // Test Diagonal from left 2 right
@@ -128,57 +156,49 @@ public class GridAnalyzerTest {
     public void emptyColumnDoesNotWinByDiagonalCheck() {
         Grid grid = new Grid();
         // Act and Assert
-        assertFalse("should be false", checkDiagonalLeft2Right(grid));
+        assertEquals("should be unknown", UNKNOWN, checkDiagonalLeft2Right(grid));
     }
 
     @Test
     public void when4SameTokenFromLeft2RightThanAnalyseReturnTrue() {
-        Grid grid = new Grid();
         // Arrange
-        createStubGridWithSameLeftDiagonals(grid);
-
+        Grid grid = createStubGridWithSameYellowLeftDiagonals();
         // Act and Assert
-        assertTrue("should be true", checkDiagonalLeft2Right(grid));
+        assertEquals("should be yellow", YELLOW, checkDiagonalLeft2Right(grid));
     }
 
     @Test
     public void when4SameTokenFromLeft2Right1ThanAnalyseReturnTrue() {
         // Arrange
-        Grid grid = createStubGridWithSameLeftDiagonals1();
+        Grid grid = createStubGridWithSameYellowLeftDiagonals1();
         // Act and Assert
-        assertTrue("should be true", checkDiagonalLeft2Right(grid));
+        assertEquals("should be yellow", YELLOW, checkDiagonalLeft2Right(grid));
     }
 
     @Test
     public void whenNo4SameDiagonalsThanAnalyseReturnFalse() {
-        Grid grid = new Grid();
         // Arrange
-        createStubGridNoSameTokens(grid);
+        Grid grid = createStubGridNoSameTokens();
         // Act and Assert
-        assertFalse("should be false", checkDiagonalLeft2Right(grid));
+        assertEquals("should be unknown", UNKNOWN, checkDiagonalLeft2Right(grid));
     }
 
-    private void createStubGridNoSameTokens(Grid grid) {
+    private Grid createStubGridNoSameTokens() {
+        Grid grid = new Grid();
         grid.addToken(THIRD, TokenColour.RED);
         grid.addToken(FOURTH, TokenColour.RED);
         grid.addToken(Grid.Column.FIFTH, YELLOW);
         grid.addToken(Grid.Column.SIXTH, YELLOW);
+        return grid;
     }
 
-    private void createStubGridWithSameLeftDiagonals(Grid grid) {
-        grid.addToken(FIRST, YELLOW);
-
-        grid.addToken(SECOND, YELLOW);
-        grid.addToken(SECOND, YELLOW);
-
-        grid.addToken(THIRD, YELLOW);
-        grid.addToken(THIRD, YELLOW);
-        grid.addToken(THIRD, YELLOW);
-
-        grid.addToken(FOURTH, YELLOW);
-        grid.addToken(FOURTH, YELLOW);
-        grid.addToken(FOURTH, YELLOW);
-        grid.addToken(FOURTH, YELLOW);
+    private Grid createStubGridWithSameYellowLeftDiagonals() {
+        Grid grid = new Grid();
+        addColumn2Grid(grid, FIRST, YELLOW);
+        addColumn2Grid(grid, SECOND, YELLOW, YELLOW);
+        addColumn2Grid(grid, THIRD, YELLOW, YELLOW, YELLOW);
+        addColumn2Grid(grid, FOURTH, YELLOW, YELLOW, YELLOW, YELLOW);
+        return grid;
     }
 
     // Test Diagonal from right 2 left
@@ -188,37 +208,18 @@ public class GridAnalyzerTest {
     public void emptyColumnDoesNotWinByDiagonalCheckRight2Left() {
         Grid grid = new Grid();
         // Act and Assert
-        assertFalse("should be false", checkDiagonalRight2Left(grid));
+        assertEquals("should be unknown", UNKNOWN, checkDiagonalRight2Left(grid));
     }
 
     @Test
     public void when4SameTokenFromRight2LeftThanAnalyseReturnTrue() {
         // Arrange
-        Grid grid = createStubGridWithSameRightDiagonals();
+        Grid grid = createStubGridWithSameYellowRightDiagonals();
         // Act and Assert
-        assertTrue("should be true", checkDiagonalRight2Left(grid));
+        assertEquals("should be yellow", YELLOW, checkDiagonalRight2Left(grid));
     }
 
-    @Test
-    @Ignore
-    public void when4SameTokenFromLeft2Right1ThanAnalyseReturnTrueRight2Left() {
-        // Arrange
-        Grid grid = createStubGridWithSameLeftDiagonals1();
-        // Act and Assert
-        assertTrue("should be true", checkDiagonalLeft2Right(grid));
-    }
-
-    @Test
-    @Ignore
-    public void whenNo4SameDiagonalsThanAnalyseReturnFalseRight2Left() {
-        Grid grid = new Grid();
-        // Arrange
-        createStubGridNoSameTokens(grid);
-        // Act and Assert
-        assertFalse("should be false", checkDiagonalLeft2Right(grid));
-    }
-
-    private Grid createStubGridWith4SameInARow() {
+    private Grid createStubGridWith4SameYellowInARow() {
         Grid grid = new Grid();
         // Arrange
         grid.addToken(FIRST, YELLOW);
@@ -228,7 +229,7 @@ public class GridAnalyzerTest {
         return grid;
     }
 
-    private Grid createStubGridWith4SameInAColum() {
+    private Grid createStubGridWith4SameYellowInAColum() {
         Grid grid = new Grid();
         // Arrange
         grid.addToken(SIXTH, YELLOW);
@@ -238,27 +239,25 @@ public class GridAnalyzerTest {
         return grid;
     }
 
-
-
-    private Grid createStubGridWithSameRightDiagonals() {
+    private Grid createStubGridWithSameYellowRightDiagonals() {
         Grid grid = new Grid();
-        addRow2Grid(grid, Grid.Column.FIFTH, YELLOW);
-        addRow2Grid(grid, FOURTH, YELLOW, YELLOW);
-        addRow2Grid(grid, THIRD, YELLOW, YELLOW, YELLOW);
-        addRow2Grid(grid, SECOND, YELLOW, YELLOW, YELLOW, YELLOW);
+        addColumn2Grid(grid, Grid.Column.FIFTH, YELLOW);
+        addColumn2Grid(grid, FOURTH, YELLOW, YELLOW);
+        addColumn2Grid(grid, THIRD, YELLOW, YELLOW, YELLOW);
+        addColumn2Grid(grid, SECOND, YELLOW, RED, YELLOW, YELLOW);
         return grid;
     }
 
-    private Grid createStubGridWithSameLeftDiagonals1() {
+    private Grid createStubGridWithSameYellowLeftDiagonals1() {
         Grid grid = new Grid();
-        addRow2Grid(grid, THIRD, YELLOW);
-        addRow2Grid(grid, FOURTH, YELLOW, YELLOW);
-        addRow2Grid(grid, Grid.Column.FIFTH, YELLOW, YELLOW, YELLOW);
-        addRow2Grid(grid, Grid.Column.SIXTH, YELLOW, YELLOW, YELLOW, YELLOW);
+        addColumn2Grid(grid, THIRD, YELLOW);
+        addColumn2Grid(grid, FOURTH, YELLOW, YELLOW);
+        addColumn2Grid(grid, Grid.Column.FIFTH, YELLOW, YELLOW, YELLOW);
+        addColumn2Grid(grid, Grid.Column.SIXTH, YELLOW, YELLOW, RED, YELLOW);
         return grid;
     }
 
-    private void addRow2Grid(Grid grid, Grid.Column column, TokenColour... colours) {
+    private void addColumn2Grid(Grid grid, Grid.Column column, TokenColour... colours) {
         for (TokenColour col : colours) {
             grid.addToken(column, col);
         }
