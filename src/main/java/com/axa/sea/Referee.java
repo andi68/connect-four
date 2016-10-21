@@ -8,26 +8,35 @@ public class Referee {
 
     private final Grid grid;
     private Cell.TokenColour currentPlayerColour;
+    private boolean isGameOver;
 
-    public Cell.TokenColour sayCurretPlayerColour(){
+    public Cell.TokenColour sayCurrentPlayerColour() {
         return currentPlayerColour;
     }
 
-    public static Referee startNewGame(){
+    public static Referee startNewGame() {
         return new Referee();
     }
 
-    public boolean inputCurrentPlayerAndCheckForEnd(Grid.Column column){
+    public boolean inputCurrentPlayerAndCheckForGameOver(Grid.Column column) {
+        if (isGameOver) {
+            throw new GameOverException("the game was already finished");
+        }
         grid.addToken(column, currentPlayerColour);
-        if (GridAnalyzer.checkGrid(grid) != UNKNOWN){
+        if (GridAnalyzer.checkGrid(grid) != UNKNOWN) {
+            isGameOver = true;
             return true;
         }
         toggleCurrentPLayerColour();
         return false;
     }
 
+    public Cell.TokenColour sayWinner() {
+        return isGameOver ? currentPlayerColour : UNKNOWN;
+    }
+
     private void toggleCurrentPLayerColour() {
-        switch (currentPlayerColour){
+        switch (currentPlayerColour) {
             case RED:
                 currentPlayerColour = YELLOW;
                 break;
@@ -39,9 +48,10 @@ public class Referee {
         }
     }
 
-    private Referee(){
+    private Referee() {
         currentPlayerColour = YELLOW;
         grid = new Grid();
+        isGameOver = false;
     }
 
 }

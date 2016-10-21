@@ -1,13 +1,17 @@
 package com.axa.sea;
 
 import static com.axa.sea.Cell.TokenColour.RED;
+import static com.axa.sea.Cell.TokenColour.UNKNOWN;
 import static com.axa.sea.Cell.TokenColour.YELLOW;
 import static com.axa.sea.Grid.Column.FIRST;
+import static com.axa.sea.Grid.Column.FOURTH;
 import static com.axa.sea.Grid.Column.SECOND;
+import static com.axa.sea.Grid.Column.THIRD;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RefereeTest {
@@ -17,7 +21,7 @@ public class RefereeTest {
         // Arrange + Act
         Referee referee = Referee.startNewGame();
         // Assert
-        assertEquals("player should be yellow", YELLOW, referee.sayCurretPlayerColour());
+        assertEquals("player should be yellow", YELLOW, referee.sayCurrentPlayerColour());
     }
 
     @Test
@@ -25,8 +29,8 @@ public class RefereeTest {
         // Arrange
         Referee referee = Referee.startNewGame();
         // Act
-        referee.inputCurrentPlayerAndCheckForEnd(FIRST);
-        assertEquals("player should be red", RED, referee.sayCurretPlayerColour());
+        referee.inputCurrentPlayerAndCheckForGameOver(FIRST);
+        assertEquals("player should be red", RED, referee.sayCurrentPlayerColour());
 
     }
 
@@ -35,9 +39,9 @@ public class RefereeTest {
         // Arrange
         Referee referee = Referee.startNewGame();
         // Act
-        referee.inputCurrentPlayerAndCheckForEnd(FIRST);
-        referee.inputCurrentPlayerAndCheckForEnd(FIRST);
-        assertEquals("player should be red", YELLOW, referee.sayCurretPlayerColour());
+        referee.inputCurrentPlayerAndCheckForGameOver(FIRST);
+        referee.inputCurrentPlayerAndCheckForGameOver(FIRST);
+        assertEquals("player should be red", YELLOW, referee.sayCurrentPlayerColour());
     }
 
     @Test
@@ -45,7 +49,7 @@ public class RefereeTest {
         // Arrange
         Referee referee = Referee.startNewGame();
         // Act
-        assertFalse("game should not end", referee.inputCurrentPlayerAndCheckForEnd(FIRST));
+        assertFalse("game should not end", referee.inputCurrentPlayerAndCheckForGameOver(FIRST));
     }
 
     @Test
@@ -54,23 +58,27 @@ public class RefereeTest {
         Referee referee = createStubNewMoveToFirstColumYelloWIns();
 
         // Act + Assert
-        assertTrue("game should end", referee.inputCurrentPlayerAndCheckForEnd(FIRST));
+        assertTrue("game should end", referee.inputCurrentPlayerAndCheckForGameOver(FIRST));
     }
 
     private Referee createStubNewMoveToFirstColumYelloWIns() {
         Referee referee = Referee.startNewGame();
-        referee.inputCurrentPlayerAndCheckForEnd(FIRST); //y
-        referee.inputCurrentPlayerAndCheckForEnd(SECOND); // r
-        referee.inputCurrentPlayerAndCheckForEnd(FIRST); // Y
-        referee.inputCurrentPlayerAndCheckForEnd(SECOND); // r
-        referee.inputCurrentPlayerAndCheckForEnd(FIRST); //y
-        referee.inputCurrentPlayerAndCheckForEnd(SECOND);  // r
+        referee.inputCurrentPlayerAndCheckForGameOver(FIRST); //y
+        referee.inputCurrentPlayerAndCheckForGameOver(SECOND); // r
+        referee.inputCurrentPlayerAndCheckForGameOver(FIRST); // Y
+        referee.inputCurrentPlayerAndCheckForGameOver(SECOND); // r
+        referee.inputCurrentPlayerAndCheckForGameOver(FIRST); //y
+        referee.inputCurrentPlayerAndCheckForGameOver(SECOND);  // r
         return referee;
     }
 
     @Test(expected = GameOverException.class)
     public void noMoreMovesAreAllowedWhenGameIsOver() {
-
+        //Arrange - yello wins by 4 same in first row in coloumns 1,2,3,4
+        Referee referee = Referee.startNewGame();
+        addMoves(referee, FIRST, FIRST, SECOND, FIRST, THIRD, FIRST, FOURTH);
+        // Act - game is over - one more move is not allowed
+        addMoves(referee, SECOND);
     }
 
     @Test(expected = ColumnIsFullException.class)
@@ -78,6 +86,36 @@ public class RefereeTest {
         //Arrange
         createStubWithFirstColumnFull();
 
+    }
+
+    @Test
+    @Ignore("not implemented yet")
+    public void gameIsOverWhenGridIsFull() {
+
+    }
+
+    @Test
+    @Ignore("not implemented yet")
+    public void drawGridIsOK() {
+
+    }
+
+    @Test
+    public void whenYellowWinsRefereeSaysIt() {
+        //Arrange - yello wins by 4 same in first row in coloumns 1,2,3,4
+        Referee referee = Referee.startNewGame();
+        addMoves(referee, FIRST, FIRST, SECOND, FIRST, THIRD, FIRST, FOURTH);
+        // Act
+        assertEquals("Yellow should wins", YELLOW, referee.sayWinner());
+    }
+
+    @Test
+    public void whenWeHaveNoWinnerSayWinnerShouldReturnUknown() {
+        //Arrange
+        Referee referee = Referee.startNewGame();
+        addMoves(referee, FIRST, FIRST, SECOND, FIRST);
+        // Act
+        assertEquals("Nobody should wins", UNKNOWN, referee.sayWinner());
     }
 
     private Referee createStubWithFirstColumnFull() {
@@ -88,7 +126,7 @@ public class RefereeTest {
 
     private Referee addMoves(Referee referee, Grid.Column... columns) {
         for (Grid.Column column : columns) {
-            referee.inputCurrentPlayerAndCheckForEnd(column);
+            referee.inputCurrentPlayerAndCheckForGameOver(column);
         }
         return referee;
     }
